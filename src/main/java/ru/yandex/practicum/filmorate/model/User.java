@@ -8,14 +8,15 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class Film {
+public class User {
     private int id;
+    @Email
     @NotNull
+    private String email;
+    @NotBlank
+    @NotNull
+    private String login;
     private String name;
-    @Size(max = 200)
-    private String description;
     @Past
-    private LocalDate releaseDate;
-    @Positive
-    private int duration;
+    private LocalDate birthday;
 }
