@@ -1,75 +1,69 @@
 package ru.yandex.practicum.filmorate.service;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.storage.FriendStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Slf4j
+@RequiredArgsConstructor
 @Service
 public class UserService {
     private final UserStorage userStorage;
+    private final FriendStorage friendStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
+    public List<User> findAll() {
+        return userStorage.findAll();
     }
 
-    public List<User> getUsers() {
-        return userStorage.getUsers();
+    public User create(User user) {
+        validate(user);
+        return userStorage.create(user);
     }
 
-    public User createUser(User user) {
-        if (!user.getEmail().contains("@")) {
-            throw new UserException("некорректный email");
+    public User update(User user) {
+        validate(user);
+        if (userStorage.findUserById(user.getId()).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден.");
         }
-        if (user.getLogin().contains(" ") || user.getLogin().isBlank()) {
-            throw new UserException("некорректный логин");
+        return userStorage.update(user);
+    }
+
+    public User findUserById(int id) {
+        return userStorage.findUserById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+    }
+
+    public void addFriend(int id, int friendId) {
+        if (userStorage.findUserById(id).isEmpty() || userStorage.findUserById(friendId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден.");
         }
-        return userStorage.createUser(user);
+        if (id < 0 || friendId < 0) {
+            throw new NotFoundException("Пользователь не найден.");
+        }
+        friendStorage.addFriend(id, friendId);
     }
 
-    public User updateUser(User user) {
-        return userStorage.updateUser(user);
+    public List<User> findAllFriends(int id) {
+        return friendStorage.findAllFriends(id);
     }
 
-    public User getUserById(Long userId) {
-        return userStorage.getUserById(userId)
-                .orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+    public List<User> findCommonFriends(int id, int otherId) {
+        return friendStorage.findCommonFriends(id, otherId);
     }
 
-    public User addFriend(Long userId,Long friendId) {
-        User user = getUserById(userId);
-        User friend = getUserById(friendId);
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-        log.info("{} теперь ваш друг", friend.getName());
-        return user;
+    public void removeFriend(int id, int friendId) {
+        if (userStorage.findUserById(id).isEmpty() || userStorage.findUserById(friendId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден.");
+        }
+        friendStorage.removeFriend(id, friendId);
     }
 
-    public void deleteFriend(Long userId, Long friendId) {
-            User user = getUserById(userId);
-            User friend = getUserById(friendId);
-            user.getFriends().remove(friendId);
-            friend.getFriends().remove(userId);
-            log.info("{} вам больше не друг", friend.getName());
-    }
-
-    public List<User> getFriendList(Long userId) {
-        User user = getUserById(userId);
-        return user.getFriends().stream()
-                .map(this::getUserById).collect(Collectors.toList());
-    }
-
-    public List<User> getCommonFriends(Long userId, Long friendId) {
-        List<User> commonFriends = getFriendList(userId);
-        commonFriends.retainAll(getFriendList(friendId));
-        return commonFriends;
+    private void validate(User user) {
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
     }
 }

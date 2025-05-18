@@ -1,75 +1,67 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")
+@RequestMapping("users")
 public class UserController {
     private final UserService userService;
 
-    @Autowired
-    public UserController (UserService userService) {
-        this.userService = userService;
-    }
-
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<User> getUsers() {
-        return userService.getUsers();
-    }
-
-    @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
-    }
-
-    @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable Long id) {
-        return userService.getFriendList(id);
-    }
-
-    @GetMapping("/{userId}/friends/common/{friendId}")
-    public List<User> getCommonFriends(@PathVariable Long userId, @PathVariable Long friendId) {
-        return userService.getCommonFriends(userId, friendId);
-    }
-
     @PostMapping
-    public User createUser(@Valid @RequestBody User user) {
-        if (user.getLogin().isBlank() || user.getLogin().contains(" ")) {
-            throw new UserException("некорректный логин");
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new UserException("День рождения должен быть в прошлом");
-        }
-        if (!(user.getEmail().contains("@") && user.getEmail().contains("."))) {
-            throw new UserException("некорректный email");
-        }
-        return userService.createUser(user);
+    public User create(@RequestBody User user) {
+        log.info("POST / user / {}", user.getLogin());
+        userService.create(user);
+        return user;
     }
 
     @PutMapping
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
+    public User update(@RequestBody User user) {
+        log.info("PUT / user / {}", user.getLogin());
+        userService.update(user);
+        return user;
     }
 
-    @PutMapping("{userId}/friends/{friendId}")
-    public User addFriend(@PathVariable Long userId, @PathVariable Long friendId) {
-        return userService.addFriend(userId, friendId);
+    @GetMapping
+    public List<User> findAll() {
+        log.info("GET / users");
+        return userService.findAll();
     }
 
-    @DeleteMapping("{userId}/friends/{friendId}")
-    public void deleteFriend(@PathVariable Long userId, @PathVariable Long friendId) {
-        userService.deleteFriend(userId, friendId);
+    @GetMapping("/{id}")
+    public User findUserById(@PathVariable("id") int id) {
+        log.info("GET / users / {}", id);
+        return userService.findUserById(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        log.info("PUT / {} / friends / {}", id, friendId);
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable("id") int id, @PathVariable("friendId") int friendId) {
+        log.info("PUT / {} / friends / {}", id, friendId);
+        userService.removeFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> findAllFriends(@PathVariable("id") int id) {
+        log.info("GET / {} / friends", id);
+        return userService.findAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> findCommonFriends(@PathVariable("id") int id, @PathVariable("otherId") int otherId) {
+        log.info("GET / {} / friends / common / {}", id, otherId);
+        return userService.findCommonFriends(id, otherId);
     }
 }
