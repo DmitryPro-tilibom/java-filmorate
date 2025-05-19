@@ -46,7 +46,6 @@ public class UserService {
             throw new NotFoundException("Пользователь не найден.");
         }
         friendStorage.addFriend(id, friendId);
-        friendStorage.addFriend(friendId, id);
     }
 
     public List<User> findAllFriends(int id) {
