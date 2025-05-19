@@ -49,7 +49,8 @@ public class UserService {
     }
 
     public List<User> findAllFriends(int id) {
-        return friendStorage.findAllFriends(id);
+        User user = userStorage.findUserById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        return friendStorage.findAllFriends(user.getId());
     }
 
     public List<User> findCommonFriends(int id, int otherId) {
