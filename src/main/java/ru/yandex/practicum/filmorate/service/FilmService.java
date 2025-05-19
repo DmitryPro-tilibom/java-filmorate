@@ -3,11 +3,13 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class FilmService {
     private final UserStorage userStorage;
 
     public Film create(Film film) {
+        validate(film);
         return filmStorage.create(film);
     }
 
@@ -76,5 +79,23 @@ public class FilmService {
 
     public Genre findGenreById(int id) {
         return genreStorage.findGenreById(id).orElseThrow(() -> new NotFoundException("Жанр не найден."));
+    }
+
+    private void validate(Film film) {
+        if (film.getName() == null || film.getName().isBlank()) {
+            film.setName("без названия");
+        }
+        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
+            throw new ValidationException("Некорректная дата выпуска фильма");
+        }
+        if (film.getDescription().length() > 200) {
+            throw new ValidationException("Слишком длинное описание");
+        }
+        if (!findAllMpa().contains(film.getMpa())) {
+            throw new ValidationException("Такого рейтинга не существует");
+        }
+        if (!findAllGenres().contains(film.getGenres().getFirst())) {
+            throw new ValidationException("Такого жанра не сществует");
+        }
     }
 }
