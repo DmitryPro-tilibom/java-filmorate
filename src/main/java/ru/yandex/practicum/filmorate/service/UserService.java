@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.UserException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.FriendStorage;
@@ -69,6 +70,10 @@ public class UserService {
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {
             throw new ValidationException("Некорректная дата рождения");
+        }
+        if (user.getEmail() == null || user.getEmail().isBlank() ||
+                user.getEmail().matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$")) {
+            throw new UserException("некорректный email");
         }
     }
 }

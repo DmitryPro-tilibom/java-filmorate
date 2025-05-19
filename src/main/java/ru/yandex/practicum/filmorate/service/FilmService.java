@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.FilmException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -95,16 +96,27 @@ public class FilmService {
         if (film.getDuration() <= 0) {
             throw new ValidationException("Продолжительность указана некорректно");
         }
-        if (!allGetMpaIds().contains(film.getMpa().getId())) {
-            throw new ValidationException("Такого рейтинга нет");
+        if (!allMpaIds().contains(film.getMpa().getId())) {
+            throw new FilmException("Такого рейтинга нет");
+        }
+        if (!allGenreIds().contains(film.getGenres().getFirst().getId())) {
+            throw new FilmException("Такого жанра нет");
         }
     }
 
-    private List<Integer> allGetMpaIds() {
+    private List<Integer> allMpaIds() {
         List<Integer> mpaIds = new ArrayList<>();
-        for(Mpa mpa : findAllMpa()) {
+        for (Mpa mpa : findAllMpa()) {
             mpaIds.add(mpa.getId());
         }
         return mpaIds;
+    }
+
+    private List<Integer> allGenreIds() {
+        List<Integer> genreIds = new ArrayList<>();
+        for (Genre genre : findAllGenres()) {
+            genreIds.add(genre.getId());
+        }
+        return genreIds;
     }
 }
