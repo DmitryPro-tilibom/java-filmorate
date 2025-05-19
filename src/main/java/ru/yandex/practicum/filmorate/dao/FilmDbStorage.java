@@ -41,7 +41,7 @@ public class FilmDbStorage implements FilmStorage {
                     ps.setString(2, film.getDescription());
                     ps.setDate(3, Date.valueOf(film.getReleaseDate()));
                     ps.setInt(4, film.getDuration());
-                    ps.setInt(5, film.getMpa().getMpaId());
+                    ps.setInt(5, film.getMpa().getId());
                     return ps;
                 }, keyHolder);
         film.setId(keyHolder.getKey().intValue());
@@ -55,7 +55,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE films SET name = ?, description = ?, releaseDate = ?, duration = ?, rating_id = ? " +
                 "WHERE film_id = ?";
         jdbcTemplate.update(sql, film.getName(), film.getDescription(), film.getReleaseDate(), film.getDuration(),
-                film.getMpa().getMpaId(), id);
+                film.getMpa().getId(), id);
         updateGenres(film.getGenres(), id);
         return film;
     }
@@ -105,7 +105,7 @@ public class FilmDbStorage implements FilmStorage {
                         @Override
                         public void setValues(PreparedStatement ps, int i) throws SQLException {
                             ps.setInt(1, id);
-                            ps.setInt(2, g[i].getGenreId());
+                            ps.setInt(2, g[i].getId());
                         }
 
                         public int getBatchSize() {
