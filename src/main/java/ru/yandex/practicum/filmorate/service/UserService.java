@@ -63,7 +63,6 @@ public class UserService {
             throw new NotFoundException("Пользователь не найден.");
         }
         friendStorage.removeFriend(id, friendId);
-        friendStorage.removeFriend(friendId, id);
     }
 
     private void validate(User user) {

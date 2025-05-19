@@ -99,7 +99,7 @@ public class FilmService {
             throw new NotFoundException("Такого рейтинга нет");
         }
         if (!allGenreIds().contains(film.getGenres().getFirst().getId())) {
-            film.getGenres().add(new Genre(0, "жанр не определен"));
+            throw new NotFoundException("Жанр не найден");
         }
     }
 
