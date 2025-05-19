@@ -11,9 +11,7 @@ import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -101,7 +99,7 @@ public class FilmService {
             throw new NotFoundException("Такого рейтинга нет");
         }
         if (!film.getGenres().isEmpty()) {
-            if(!allGenreIds().contains(film.getGenres().getFirst().getId())) {
+            if (!allGenreIds().contains(film.getGenres().getFirst().getId())) {
                 throw new NotFoundException("Жанр не найден");
             }
         }
