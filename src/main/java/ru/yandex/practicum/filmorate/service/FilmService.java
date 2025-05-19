@@ -97,10 +97,10 @@ public class FilmService {
             throw new ValidationException("Продолжительность указана некорректно");
         }
         if (!allMpaIds().contains(film.getMpa().getId())) {
-            throw new FilmException("Такого рейтинга нет");
+            throw new NotFoundException("Такого рейтинга нет");
         }
         if (!allGenreIds().contains(film.getGenres().getFirst().getId())) {
-            throw new FilmException("Такого жанра нет");
+            throw new NotFoundException("Такого жанра нет");
         }
     }
 
