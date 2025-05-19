@@ -10,7 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Mpa {
     @NotNull
-    private int mpaId;
+    private final int id;
     @NotNull
-    private String name;
+    private final String name;
 }

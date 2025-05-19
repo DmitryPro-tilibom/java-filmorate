@@ -10,7 +10,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Genre {
     @NotNull
-    private Integer genreId;
+    private final Integer id;
     @NotNull
-    private String name;
+    private final String name;
 }
