@@ -102,7 +102,7 @@ public class FilmService {
 
     private List<Integer> allGetMpaIds() {
         List<Integer> mpaIds = new ArrayList<>();
-        for(Mpa mpa : findAllMpa()) {
+        for (Mpa mpa : findAllMpa()) {
             mpaIds.add(mpa.getId());
         }
         return mpaIds;
