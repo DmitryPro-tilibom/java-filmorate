@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -83,7 +84,7 @@ public class FilmService {
 
     private void validate(Film film) {
         if (film.getName() == null || film.getName().isBlank()) {
-            film.setName("без названия");
+            throw new ValidationException("Укажите название фильма");
         }
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             throw new ValidationException("Некорректная дата выпуска фильма");
@@ -91,5 +92,19 @@ public class FilmService {
         if (film.getDescription().length() > 200) {
             throw new ValidationException("Слишком длинное описание");
         }
+        if (film.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность указана некорректно");
+        }
+        if (!allGetMpaIds().contains(film.getMpa().getId())) {
+            throw new ValidationException("Такого рейтинга нет");
+        }
+    }
+
+    private List<Integer> allGetMpaIds() {
+        List<Integer> mpaIds = new ArrayList<>();
+        for(Mpa mpa : findAllMpa()) {
+            mpaIds.add(mpa.getId());
+        }
+        return mpaIds;
     }
 }
