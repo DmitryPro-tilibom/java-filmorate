@@ -91,11 +91,5 @@ public class FilmService {
         if (film.getDescription().length() > 200) {
             throw new ValidationException("Слишком длинное описание");
         }
-        if (!findAllMpa().contains(film.getMpa())) {
-            throw new ValidationException("Такого рейтинга не существует");
-        }
-        if (!findAllGenres().contains(film.getGenres().getFirst())) {
-            throw new ValidationException("Такого жанра не сществует");
-        }
     }
 }
