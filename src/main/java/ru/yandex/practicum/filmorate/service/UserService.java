@@ -72,7 +72,7 @@ public class UserService {
             throw new ValidationException("Некорректная дата рождения");
         }
         if (user.getEmail() == null || user.getEmail().isBlank() ||
-                user.getEmail().matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$")) {
+                !(user.getEmail().matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\\\.[A-Z]{2,6}$"))) {
             throw new UserException("некорректный email");
         }
     }
