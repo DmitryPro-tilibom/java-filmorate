@@ -17,8 +17,10 @@ public class FriendDbStorage implements FriendStorage {
 
     @Override
     public void addFriend(int id, int friendId) {
-        String sql = "INSERT INTO friendship(user_id, friend_id) VALUES (?,?)";
+        String sql = "INSERT INTO friendship(user_id, friend_id) VALUES (?, ?)";
         jdbcTemplate.update(sql, id, friendId);
+        String sql2 = "INSERT INTO friendship(user_id, friend_id) VALUES (?, ?)";
+        jdbcTemplate.update(sql2, friendId, id);
     }
 
     @Override
