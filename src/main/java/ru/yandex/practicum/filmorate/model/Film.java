@@ -5,13 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
 @Builder
 public class Film {
-    private Long id;
+    private Integer id;
     @NotNull
     @NotBlank
     private String name;
@@ -21,5 +21,8 @@ public class Film {
     private LocalDate releaseDate;
     @Positive
     private int duration;
-    private final Set<Long> likes = new HashSet<>();
+    private final Set<Long> likes;
+    @NotNull
+    private Mpa mpa;
+    private final LinkedHashSet<Genre> genres = new LinkedHashSet<>();
 }
