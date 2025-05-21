@@ -23,8 +23,8 @@ public class FriendDbStorage implements FriendStorage {
 
     @Override
     public void removeFriend(int id, int friendId) {
-        String sql = "DELETE FROM friendship WHERE user_id in (?, ?)";
-        jdbcTemplate.update(sql, id, friendId);
+        String sql = "DELETE FROM friendship WHERE user_id in (?, ?) AND friend_id in (?, ?)";
+        jdbcTemplate.update(sql, id, friendId, id, friendId);
     }
 
     @Override
